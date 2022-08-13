@@ -1,0 +1,42 @@
+version: '2.1'
+services:
+  pgadmin:
+    image: dpage/pgadmin4:6.12
+    container_name: pgadmin
+    ports:
+      - "5433:5433"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@example.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 5433
+    depends_on:
+      - timescaledb
+    mem_limit: 512m
+
+  timescaledb:
+    image: timescale/timescaledb:2.7.2-pg14
+    container_name: timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: gatling
+    mem_limit: 512m
+
+  grafana:
+    image: grafana/grafana:9.0.7
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: secret
+    links:
+      - timescaledb
+    depends_on:
+      - timescaledb
+    volumes:
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./dashboards:/var/lib/grafana/dashboards
+    mem_limit: 256m

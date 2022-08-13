@@ -1,0 +1,21 @@
+apiVersion: 1
+
+# Configuration parameters taken from here:
+# https://grafana.com/docs/grafana/latest/administration/provisioning/#provision-grafana
+# https://github.com/timescale/tobs/blob/main/chart/templates/grafana-datasources-sec.yaml
+
+datasources:
+  - name: timescaledb
+    type: postgres
+    orgId: 1
+    isDefault: true
+    url: timescaledb:5432
+    user: postgres
+    database: gatling
+    editable: true
+    secureJsonData:
+      password: 'password'
+    jsonData:
+      sslmode: 'disable'
+      postgresVersion: 10
+      timescaledb: true
